@@ -25,8 +25,8 @@ public class NPFileInfo : IPathInfo
         set
         {
             name = value;
-            NameChanged?.Invoke(this, this);
-            Debug.WriteLine("NameChanged");
+            //NameChanged?.Invoke(this, this);
+            //Debug.WriteLine(name);
         }
     }
 

@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Windows;
 using Icon = System.Drawing.Icon;
 using Image = System.Windows.Controls.Image;
-using System.Diagnostics;
-using System.Reflection.PortableExecutable;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -23,24 +16,18 @@ public class NPTreeInfo : TreeViewItem, IPathInfo
 
     const string openFolderPath = @"Images\openFolder.png";
     const string closedFolderPath = @"Images\closedFolder.png";
-
+    private string name = "";
     StackPanel headerPanel = new StackPanel();
     Image icon = new Image();
     TextBlock headerText = new TextBlock();
 
-    private string name = "";
-
-    
-
     public System.Windows.Media.Brush ForeColor { get; set; } = System.Windows.Media.Brushes.Gold;
-
     public FileSystemInfo? dirInfo { get; set; }
     public DateTime Date { get; set; }
     public string Path { get; set; } = "";
     public string Dir { get; set; }
     public string ImageSource { get; set; }
     public bool IsOpen { get; set; } = false;
-
     public string Name
     {
         get => name;
@@ -48,7 +35,7 @@ public class NPTreeInfo : TreeViewItem, IPathInfo
         {
             name = value;
             Header = name;
-            OnNameChanged();
+            //OnNameChanged();
         }
     }
     public long Length { get; set; } = 0;
@@ -61,7 +48,6 @@ public class NPTreeInfo : TreeViewItem, IPathInfo
     {
 
     }
-
     public NPTreeInfo(DirectoryInfo di, bool isExpanded = false)
     {
         Date = di.LastWriteTime;
@@ -102,10 +88,10 @@ public class NPTreeInfo : TreeViewItem, IPathInfo
 
     private void NPDirInfo_Collapsed(object sender, RoutedEventArgs e)
     {
-        Debug.WriteLine($"osource: {e.OriginalSource}");
+        //Debug.WriteLine($"osource: {e.OriginalSource}");
         if (e.OriginalSource == this)
         {
-            Debug.WriteLine($"{Name} collaped");
+            //Debug.WriteLine($"{Name} collaped");
             ImageSource = closedFolderPath;
             icon.Source = new BitmapImage(new Uri(ImageSource, UriKind.Relative));
             icon.Width = 18;
@@ -113,21 +99,18 @@ public class NPTreeInfo : TreeViewItem, IPathInfo
         }
         //e.Handled = true;
     }
-
     private void NPDirInfo_Expanded(object sender, RoutedEventArgs e)
     {
-        Debug.WriteLine($"osource: {e.OriginalSource}");
+        //Debug.WriteLine($"osource: {e.OriginalSource}");
         if (e.OriginalSource == this)
         {
-            Debug.WriteLine($"{Name} expanded");
+            //Debug.WriteLine($"{Name} expanded");
             ImageSource = openFolderPath;
             icon.Source = new BitmapImage(new Uri(ImageSource, UriKind.Relative));
             icon.Width = 18;
-            //Debug.WriteLine($"{icon.Source}");
         }
 
     }
-
     private void HeaderPanel_MouseUp(object sender, MouseButtonEventArgs e)
     {
         //Debug.WriteLine("HeaderPanel_MouseUp");
@@ -154,13 +137,11 @@ public class NPTreeInfo : TreeViewItem, IPathInfo
 
         //Debug.WriteLine(ImageSource);
     }
-
     public override string ToString()
     {
         return Name;//.TrimEnd(['\\', ':']);
 
     }
-
     public ImageSource ImageSourceFromIcon(Icon icon)
     {
         ImageSource imageSource = Imaging.CreateBitmapSourceFromHIcon(
@@ -170,36 +151,26 @@ public class NPTreeInfo : TreeViewItem, IPathInfo
 
         return imageSource;
     }
-
-    protected void OnNameChanged()
-    {
-        //NameChanged?.Invoke(this, this);
-    }
 }
 
 public class NPDirInfo : IPathInfo
 {
-    private string name = "";
-
     public event EventHandler<IPathInfo>? NameChanged;
-
+    private string name = "";
+    
     public System.Windows.Media.Brush ForeColor { get; set; } = System.Windows.Media.Brushes.Gold;
-
     public FileSystemInfo? dirInfo { get; set; }
     public DateTime Date { get; set; }
     public string Path { get; set; } = "";
     public string Dir { get; set; }
     public string ImageSource { get; set; }
     public bool IsOpen { get; set; } = false;
-
     public string Name
     {
         get => name;
         set
         {
             name = value;
-            //Header = name;
-            OnNameChanged();
         }
     }
     public long Length { get; set; } = 0;
@@ -212,7 +183,6 @@ public class NPDirInfo : IPathInfo
     {
 
     }
-
     public NPDirInfo(DirectoryInfo di, bool isExpanded = false)
     {
         Date = di.LastWriteTime;
@@ -225,14 +195,11 @@ public class NPDirInfo : IPathInfo
         
     }
 
-    
-
     public override string ToString()
     {
         return Name;//.TrimEnd(['\\', ':']);
 
     }
-
     public ImageSource ImageSourceFromIcon(Icon icon)
     {
         ImageSource imageSource = Imaging.CreateBitmapSourceFromHIcon(
@@ -242,12 +209,4 @@ public class NPDirInfo : IPathInfo
 
         return imageSource;
     }
-
-    protected void OnNameChanged()
-    {
-        //NameChanged?.Invoke(this, this);
-    }
 }
-
-
-

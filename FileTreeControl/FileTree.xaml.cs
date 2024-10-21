@@ -25,6 +25,7 @@ namespace FileTreeControl;
 [ObservableObject]
 public partial class FileTree : UserControl
 {
+    public event EventHandler<string> PathChanged;
     public event EventHandler<string>? ErrorOccurred;
     public event EventHandler<string>? FileOpenRequest;
     public event EventHandler<(string OldPath, string NewPath)>? FileRenameRequest;
@@ -65,7 +66,7 @@ public partial class FileTree : UserControl
         foreach (var item in tmpTVI.Items)
         {
             var tvi = (NPTreeInfo)item;
-            if ((tvi.Name as string) == headerName)
+            if ((tvi.Name.ToLower()) == headerName.ToLower())
             {
                 return tvi;
             }
@@ -73,15 +74,19 @@ public partial class FileTree : UserControl
         return null;
     }
 
-    // Method overloaded tp accommodate first first call.
+    // Method overloaded tp accommodate first first call which is TreeView not TreeViewItem
     private NPTreeInfo? GetTVIByHeader(System.Windows.Controls.TreeView tmpTV, string headerName)
     {
         foreach (var item in tmpTV.Items)
         {
             var tvi = (NPTreeInfo)item;
             Debug.WriteLine(tvi.Name as string);
-            if ((tvi.Name as string) == headerName)
+            if ((tvi.Name.ToLower()) == headerName.ToLower())
             {
+                if (!tvi.HasItems)
+                {
+                    TreeViewItemRefresh(tvi);
+                }
                 Debug.WriteLine("found");
                 return tvi;
             }
@@ -124,7 +129,6 @@ public partial class FileTree : UserControl
     }
     private void ListDrives()
     {
-        //DriveInfo[] drives = DriveInfo.GetDrives();
         try
         {
             var drives = Directory.GetLogicalDrives();
@@ -133,12 +137,10 @@ public partial class FileTree : UserControl
                 NPTreeInfo tvi = CreateTreeItem(drive);
                 tree.Items.Add(tvi);
             }
-            //return true;
         }
         catch (Exception ex)
         {
             Log(ex.Message);
-            //return false;
         }
     }
     private IEnumerable<string>? ListFiles(IPathInfo pathInfo)
@@ -180,17 +182,15 @@ public partial class FileTree : UserControl
         {
             return null;
         }
-        //UpdateTreeViewItem(rootTVI);
         rootTVI.IsExpanded = true;
 
-        // Here we have the first NPTreeViewItem in TreeView
-        // Clear list and add a CrumbItem
-        //crumbList.Clear();
-        //crumbList.Add(new CrumbItem(rootTVI));
+        // Here we have the first NPTreeItem in TreeView
         bool success = true;
         for (int i = 1; i < pathSplit.Length; i++)
         {
-            NPTreeInfo? treeViewItem = GetTVIByHeader(rootTVI, pathSplit[i]);
+            var search = pathSplit[i];
+            Log($"Searching for {search}...");
+            NPTreeInfo? treeViewItem = GetTVIByHeader(rootTVI, search);
             if (treeViewItem is null)
             {
                 Log("Searching tree failed");
@@ -200,13 +200,10 @@ public partial class FileTree : UserControl
 
             // Here we have the next TViewItem in previous item,
             //  so update the TreeView, and expand.
-            //HistoryNavigation = true;
-            //treeViewItem = TreeViewItemRefresh(treeViewItem);
             TreeViewItemRefresh(treeViewItem);
-            //HistoryNavigation = true;
             treeViewItem.IsExpanded = true;
-            // Add new crumb to list
-            //crumbList.Add(new CrumbItem(treeViewItem));
+
+            // New root tvi
             rootTVI = treeViewItem;
         }
 
@@ -215,25 +212,13 @@ public partial class FileTree : UserControl
         {
             NPTreeInfo targetItem = rootTVI;
 
-            // IsSelected will cause targetItem to be updated with UpdateTreeViewItem()
-            //  via tv_SelectedItemChanged event
-            //HistoryNavigation = true;
-            targetItem.IsSelected = true;
-
             // At this point we have the last element in the path and want to ensure it's visible.
             //  but we want as many of targetItem.Items as possible (if any) to be visible.
             // In my case there is space for ~22 items, so utilize them all if possivle,
             //  while ensuring targetItem is still in view (at the top if necessary).
             int count = targetItem.Items.Count;
-            //int tvHeight = (int)tv.ActualHeight;
-            //int tvItemHeight = (int)((TViewItem)tv.Items[0]).ActualHeight;
-            //int maxVisibleItems = tvHeight / tvItemHeight;
-            //targetItem.Focus();
-            //if (count > 0)
-            //{
-            //    targetItem = (TreeViewItem)(targetItem.Items[(count < 22) ? count - 1 : 21]);
-            //}
             targetItem.BringIntoView();
+            targetItem.IsSelected = true;
             return targetItem;
         }
         return null;
@@ -245,7 +230,7 @@ public partial class FileTree : UserControl
             ErrorOccurred?.Invoke(this, $"The path: {path} does not exist.");
             return;
         }
-        TreeViewSeekToItem(path);
+        var tvi = TreeViewSeekToItem(path);
         NPTreeInfo nPTreeInfo = CreateTreeItem(path);
         TreeViewItemRefresh(nPTreeInfo);
         CurrentContentList = GridRefresh(nPTreeInfo);
@@ -307,7 +292,8 @@ public partial class FileTree : UserControl
         else 
         {
             TreeViewSeekToItem(CurrentGridSelection.Path);
-            CurrentContentList = GridRefresh(CurrentGridSelection); 
+            PathChanged?.Invoke(this, CurrentGridSelection.Path);
+            CurrentContentList = GridRefresh(CurrentGridSelection);
         }
 
         
@@ -334,6 +320,7 @@ public partial class FileTree : UserControl
     {
         TreeViewItemRefresh(e);
         CurrentContentList = GridRefresh(e);
+        PathChanged?.Invoke(this,e.Dir);
     }
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
