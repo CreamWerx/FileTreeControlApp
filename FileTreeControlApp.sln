@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTreeControl", "FileTreeControl\FileTreeControl.csproj", "{A5D742F9-54FA-4A52-8E94-D110806A4985}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTreeUI", "FileTreeUI\FileTreeUI.csproj", "{8499473C-A8F0-445C-AD52-B1D5577ADECF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A5D742F9-54FA-4A52-8E94-D110806A4985}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5D742F9-54FA-4A52-8E94-D110806A4985}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5D742F9-54FA-4A52-8E94-D110806A4985}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5D742F9-54FA-4A52-8E94-D110806A4985}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8499473C-A8F0-445C-AD52-B1D5577ADECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8499473C-A8F0-445C-AD52-B1D5577ADECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8499473C-A8F0-445C-AD52-B1D5577ADECF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8499473C-A8F0-445C-AD52-B1D5577ADECF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77AF08DE-BF12-463B-B5FE-282F924A51BA}
+	EndGlobalSection
+EndGlobal
