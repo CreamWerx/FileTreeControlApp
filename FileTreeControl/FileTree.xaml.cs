@@ -25,7 +25,7 @@ namespace FileTreeControl;
 [ObservableObject]
 public partial class FileTree : UserControl
 {
-    //public event EventHandler<string>? NavigateToFolderRequest;
+    public event EventHandler<string>? ErrorOccurred;
     public event EventHandler<string>? FileOpenRequest;
     public event EventHandler<(string OldPath, string NewPath)>? FileRenameRequest;
     public event EventHandler<(string OldPath, string NewPath)>? FolderRenameRequest;
@@ -240,6 +240,11 @@ public partial class FileTree : UserControl
     }
     public void UserNavigate(string path)
     {
+        if (!Path.Exists(path))
+        {
+            ErrorOccurred?.Invoke(this, $"The path: {path} does not exist.");
+            return;
+        }
         TreeViewSeekToItem(path);
         NPTreeInfo nPTreeInfo = CreateTreeItem(path);
         TreeViewItemRefresh(nPTreeInfo);
